@@ -2,6 +2,7 @@ package org.example.service;
 
 
 import jakarta.annotation.PostConstruct;
+import org.example.exceptions.CatNotFoundException;
 import org.example.model.Cat;
 import org.example.repository.CatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,17 @@ public class CatService {
     }
 
     public Cat readCat(Long id){
-        return repo.findById(id).orElse(null);
+        return repo.findById(id).orElseThrow(()->new CatNotFoundException(id.toString()));
     }
 
     public void deleteCat(Long id){
         repo.deleteById(id);
     }
 
+    public int update(Long id, Cat newCat){
+        repo.findById(id).orElseThrow(()->new CatNotFoundException(id.toString()));
+        newCat.setId(id);
+        repo.save(newCat);
+      return 0;
+    }
 }
